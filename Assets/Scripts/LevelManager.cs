@@ -56,34 +56,38 @@ public class LevelManager : MonoBehaviour
     }
 
     private void SpawnGrid()
+{
+    int w = currentLevelData.grid_width;
+    int h = currentLevelData.grid_height;
+    string[] items = currentLevelData.grid;
+
+    // Define a scaling factor for the grid and objects
+    float gridScale = 0.5f; // Adjust this value to fit your needs
+
+    for (int y = 0; y < h; y++)
     {
-        int w = currentLevelData.grid_width;
-        int h = currentLevelData.grid_height;
-        string[] items = currentLevelData.grid;
-
-        // The data is said to start from bottom-left to top-right. We'll assume:
-        // index = y*w + x, y=0 is bottom row, x=0 is left column
-        for (int y = 0; y < h; y++)
+        for (int x = 0; x < w; x++)
         {
-            for (int x = 0; x < w; x++)
+            int index = y * w + x;
+            if (index < items.Length)
             {
-                int index = y * w + x;
-                if (index < items.Length)
+                string code = items[index]; // "r", "g", "b", "y", "bo", "s", "v", "rand" etc.
+                GameObject prefab = GetPrefabByCode(code);
+                if (prefab != null)
                 {
-                    string code = items[index]; // "r", "g", "b", "y", "bo", "s", "v", "rand" etc.
-                    GameObject prefab = GetPrefabByCode(code);
-                    if (prefab != null)
-                    {
-                        Vector2 spawnPos = new Vector2(x, y);
+                    // Adjust the position based on the grid scale
+                    Vector2 spawnPos = new Vector2(x * gridScale, y * gridScale);
 
-                        GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
-                        // Optionally, parent them to the LevelManager for organization:
-                        obj.transform.SetParent(this.transform);
-                    }
+                    GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
+                    obj.transform.SetParent(this.transform);
+
+                    // Scale the object to fit the grid
+                    obj.transform.localScale = new Vector3(gridScale, gridScale, gridScale);
                 }
             }
         }
     }
+}
 
     // This method chooses which prefab to instantiate based on the code in JSON
     private GameObject GetPrefabByCode(string code)
