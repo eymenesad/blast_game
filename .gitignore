@@ -38,6 +38,7 @@ ExportedObj/
 *.suo
 *.tmp
 *.user
+*.cs.meta
 *.userprefs
 *.pidb
 *.booproj

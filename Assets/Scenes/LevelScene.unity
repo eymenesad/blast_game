@@ -211,8 +211,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1272289271
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1272289273}
+  - component: {fileID: 1272289272}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1272289272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272289271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ca6324d86094454299086d662c9625e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movesText: {fileID: 0}
+  failPopup: {fileID: 0}
+  winPopup: {fileID: 0}
+  redCubePrefab: {fileID: 7506391677015238345, guid: 9b2c160962ca046f0bdcfbd40ac4ea59, type: 3}
+  greenCubePrefab: {fileID: 8193925984299074346, guid: 26265afd61df0448a8dd2cc2f3ce3ba9, type: 3}
+  blueCubePrefab: {fileID: 2621395074294794735, guid: 35e2372d569d345acbd0a7790872c32f, type: 3}
+  yellowCubePrefab: {fileID: 430072841809900878, guid: a470229006a16408c94cc9423ae38430, type: 3}
+  boxPrefab: {fileID: 6593241752315113275, guid: dc2b44952d43446b1a81fbbf282483db, type: 3}
+  stonePrefab: {fileID: 7319363440742745089, guid: 1ae4b0417fb1743f085a454d814d9442, type: 3}
+  vasePrefab: {fileID: 630448322880478454, guid: 624efbe05cb28406390c079d1ccdf433, type: 3}
+--- !u!4 &1272289273
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272289271}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 104.391045, y: 108.46928, z: -0.9190005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 174167882}
+  - {fileID: 1272289273}

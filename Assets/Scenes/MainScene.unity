@@ -366,60 +366,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1376701410
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1376701411}
-  - component: {fileID: 1376701412}
-  m_Layer: 0
-  m_Name: LevelManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1376701411
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1376701410}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 104.391045, y: 108.46928, z: -0.9190005}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1376701412
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1376701410}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ca6324d86094454299086d662c9625e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movesText: {fileID: 0}
-  failPopup: {fileID: 0}
-  winPopup: {fileID: 0}
-  redCubePrefab: {fileID: 0}
-  greenCubePrefab: {fileID: 0}
-  blueCubePrefab: {fileID: 0}
-  yellowCubePrefab: {fileID: 0}
-  boxPrefab: {fileID: 0}
-  stonePrefab: {fileID: 0}
-  vasePrefab: {fileID: 0}
 --- !u!1 &1516735496
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,4 +825,3 @@ SceneRoots:
   - {fileID: 1718370675}
   - {fileID: 372627827}
   - {fileID: 987322957}
-  - {fileID: 1376701411}

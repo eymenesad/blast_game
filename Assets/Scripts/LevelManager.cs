@@ -74,8 +74,6 @@ public class LevelManager : MonoBehaviour
                     GameObject prefab = GetPrefabByCode(code);
                     if (prefab != null)
                     {
-                        // In 2D, we can place them at (x,y). 
-                        // If you want them visually centered, offset by -w/2, -h/2, etc.
                         Vector2 spawnPos = new Vector2(x, y);
 
                         GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
