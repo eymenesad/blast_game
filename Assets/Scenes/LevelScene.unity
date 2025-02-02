@@ -206,7 +206,7 @@ Transform:
   m_GameObject: {fileID: 174167879}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 2.5, y: 2.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -295,6 +295,7 @@ MonoBehaviour:
   boxPrefab: {fileID: 6593241752315113275, guid: dc2b44952d43446b1a81fbbf282483db, type: 3}
   stonePrefab: {fileID: 7319363440742745089, guid: 1ae4b0417fb1743f085a454d814d9442, type: 3}
   vasePrefab: {fileID: 630448322880478454, guid: 624efbe05cb28406390c079d1ccdf433, type: 3}
+  rocketPrefab: {fileID: 0}
 --- !u!4 &1272289273
 Transform:
   m_ObjectHideFlags: 0
