@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro; // For TextMeshProUGUI
+using System.Collections.Generic;
 
 public class LevelManager : MonoBehaviour
 {
@@ -18,6 +19,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject boxPrefab;   // "bo"
     [SerializeField] private GameObject stonePrefab; // "s"
     [SerializeField] private GameObject vasePrefab;  // "v"
+    [Header("Rocket Prefab")]
+    [SerializeField] private GameObject rocketPrefab;
+
 
     // If you plan to handle "rand" or rockets, you'd add them here too
 
@@ -55,39 +59,94 @@ public class LevelManager : MonoBehaviour
         SpawnGrid();
     }
 
+    private GameObject[,] gridArray; // We'll store references to every spawned cube/obstacle here
+
     private void SpawnGrid()
-{
-    int w = currentLevelData.grid_width;
-    int h = currentLevelData.grid_height;
-    string[] items = currentLevelData.grid;
-
-    // Define a scaling factor for the grid and objects
-    float gridScale = 0.5f; // Adjust this value to fit your needs
-
-    for (int y = 0; y < h; y++)
     {
-        for (int x = 0; x < w; x++)
+        int w = currentLevelData.grid_width;
+        int h = currentLevelData.grid_height;
+        string[] items = currentLevelData.grid;
+
+        // Create the array
+        gridArray = new GameObject[w, h];
+
+        // The scale factor you already have
+        float gridScale = 0.5f;
+
+        for (int y = 0; y < h; y++)
         {
-            int index = y * w + x;
-            if (index < items.Length)
+            for (int x = 0; x < w; x++)
             {
-                string code = items[index]; // "r", "g", "b", "y", "bo", "s", "v", "rand" etc.
-                GameObject prefab = GetPrefabByCode(code);
-                if (prefab != null)
+                int index = y * w + x;
+                if (index < items.Length)
                 {
-                    // Adjust the position based on the grid scale
-                    Vector2 spawnPos = new Vector2(x * gridScale, y * gridScale);
+                    string code = items[index];
+                    GameObject prefab = GetPrefabByCode(code);
+                    if (prefab != null)
+                    {
+                        // Calculate a spawn position
+                        Vector2 spawnPos = new Vector2(x * gridScale, y * gridScale);
 
-                    GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
-                    obj.transform.SetParent(this.transform);
+                        // Instantiate
+                        GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
+                        obj.transform.SetParent(this.transform);
+                        obj.transform.localScale = new Vector3(gridScale, gridScale, gridScale);
 
-                    // Scale the object to fit the grid
-                    obj.transform.localScale = new Vector3(gridScale, gridScale, gridScale);
+                        // Keep a reference in the array
+                        gridArray[x, y] = obj;
+
+                        // Attach CubeItem if it's a color cube
+                        // (For obstacles, you may use a separate ObstacleItem script.)
+                        CubeItem cubeComp = obj.AddComponent<CubeItem>();
+                        cubeComp.Init(this, x, y, code);
+                    }
                 }
             }
         }
     }
-}
+
+    private void ApplyGravity()
+    {
+        int w = currentLevelData.grid_width;
+        int h = currentLevelData.grid_height;
+
+        // For each column, move cubes down
+        for (int x = 0; x < w; x++)
+        {
+            int writeY = 0; // We'll "write" cubes starting from row 0 (bottom) upwards
+            for (int y = 0; y < h; y++)
+            {
+                if (gridArray[x, y] != null)
+                {
+                    CubeItem ci = gridArray[x, y].GetComponent<CubeItem>();
+
+                    // If it’s a color cube (or anything that has CubeItem), move it down
+                    if (ci != null)
+                    {
+                        if (writeY != y)
+                        {
+                            gridArray[x, writeY] = gridArray[x, y];
+                            gridArray[x, y] = null;
+
+                            ci.y = writeY;
+
+                            Vector3 newPos = new Vector3(x * 0.5f, writeY * 0.5f, 0f);
+                            gridArray[x, writeY].transform.position = newPos;
+                        }
+                        writeY++;
+                    }
+            }else{
+                // If it's an obstacle, just skip it code it's not affected by gravity
+
+            }
+
+            // Anything above writeY is now empty, so ensure those slots are null
+            for (int y = writeY; y < h; y++)
+            {
+                gridArray[x, y] = null;
+            }
+        }
+    }
 
     // This method chooses which prefab to instantiate based on the code in JSON
     private GameObject GetPrefabByCode(string code)
@@ -104,14 +163,63 @@ public class LevelManager : MonoBehaviour
             case "s":  return stonePrefab; // stone
             case "v":  return vasePrefab;  // vase
 
-            // case "rand":
-            //   pick a random color cube, or handle differently
-            //   return SomethingRandom();
+            case "rand":
+                GameObject[] colorPrefabs = { redCubePrefab, greenCubePrefab, blueCubePrefab, yellowCubePrefab };
+                int randIndex = Random.Range(0, colorPrefabs.Length);
+                return colorPrefabs[randIndex];
 
             default:
                 Debug.LogWarning($"No matching prefab for code: {code}");
                 return null;
         }
+    }
+
+    private List<CubeItem> FindConnectedGroup(CubeItem start)
+    {
+        List<CubeItem> results = new List<CubeItem>();
+        Queue<CubeItem> toCheck = new Queue<CubeItem>();
+
+        string targetColor = start.colorCode;
+        toCheck.Enqueue(start);
+        results.Add(start);
+
+        while (toCheck.Count > 0)
+        {
+            CubeItem current = toCheck.Dequeue();
+
+            // Get up to 4 neighbors (left, right, up, down)
+            foreach (CubeItem neighbor in GetNeighbors(current.x, current.y))
+            {
+                if (!results.Contains(neighbor) && neighbor.colorCode == targetColor)
+                {
+                    results.Add(neighbor);
+                    toCheck.Enqueue(neighbor);
+                }
+            }
+        }
+
+        return results;
+    }
+
+
+    private List<CubeItem> GetNeighbors(int x, int y)
+    {
+        List<CubeItem> neighbors = new List<CubeItem>();
+
+        // left
+        if (x > 0 && gridArray[x-1, y] != null)
+            neighbors.Add(gridArray[x-1, y].GetComponent<CubeItem>());
+        // right
+        if (x < currentLevelData.grid_width - 1 && gridArray[x+1, y] != null)
+            neighbors.Add(gridArray[x+1, y].GetComponent<CubeItem>());
+        // down
+        if (y > 0 && gridArray[x, y-1] != null)
+            neighbors.Add(gridArray[x, y-1].GetComponent<CubeItem>());
+        // up
+        if (y < currentLevelData.grid_height - 1 && gridArray[x, y+1] != null)
+            neighbors.Add(gridArray[x, y+1].GetComponent<CubeItem>());
+
+        return neighbors;
     }
 
     // Called whenever a valid move is performed (tap / blast).
@@ -136,6 +244,53 @@ public class LevelManager : MonoBehaviour
             }
         }
     }
+    public void HandleCubeTap(CubeItem tappedCube)
+{
+    // 1. Find all connected cubes of the same color
+    List<CubeItem> connected = FindConnectedGroup(tappedCube);
+
+    // 2. Check group size
+    if (connected.Count >= 2)
+    {
+        // Decide if we spawn a rocket
+        bool createRocket = (connected.Count >= 4);
+
+        // 3. Remove them from the board
+        foreach (var c in connected)
+        {
+            // Clear from grid array
+            gridArray[c.x, c.y] = null;
+            Destroy(c.gameObject);
+        }
+
+        // 4. If 4+ in the group, spawn rocket at the tapped position
+        if (createRocket && rocketPrefab != null)
+        {
+            Vector2 rocketPos = tappedCube.transform.position;
+            GameObject rocketObj = Instantiate(rocketPrefab, rocketPos, Quaternion.identity, this.transform);
+            // Optionally set rocket orientation (horizontal/vertical) at random
+            // rocketObj.GetComponent<RocketItem>().isHorizontal = (Random.value > 0.5f);
+        }
+
+        // 5. Apply gravity so empty spots get filled
+        ApplyGravity();
+
+        // 6. Subtract a move
+        OnValidMove();
+
+        // 7. Maybe check obstacles
+        if (AreAllObstaclesCleared())
+        {
+            OnWin();
+        }
+    }
+    else
+    {
+        // Group < 2 => no blast => do nothing
+        // (This could be considered an "invalid move" that doesn't consume a turn.)
+    }
+}
+
 
     private void UpdateMovesUI()
     {
